@@ -1,10 +1,15 @@
 <template>
-  <div>
-    <div>
+  <div class="w-full">
+    <div class="flex">
       <ImpExcel @success="loadDataSuccess" dateFormat="YYYY-MM-DD">
         <button class="m-3"> 导入Excel </button>
       </ImpExcel>
-      <button @click="downloadAll">downloadAll</button>
+      <div>
+        <button class="m-3" @click="downloadAll">downloadAll</button>
+      </div>
+    </div>
+    <div class="m-2 border h-[500px] w-[600px]">
+      <VirtualList :listData="data" :itemSize="100" />
     </div>
     <QRcode v-for="(item, index) in qrcodeList" ref="qrcode" :key="index" :qr-url="item.label" :qr-text1="item.text1"
       :qr-text2="item.text2" :qr-text3="item.text3" />
@@ -14,6 +19,7 @@
 <script lang="ts" setup>
 import QRcode from '@/components/QrCode.vue'
 import ImpExcel from '@/components/EXCEL.vue'
+import VirtualList from '@/components/VirtualList.vue'
 import { parallelTask } from '@/utils/common';
 import { ref } from "vue";
 interface ExcelData<T = any> {
@@ -21,6 +27,11 @@ interface ExcelData<T = any> {
   results: T[];
   meta: { sheetName: string };
 }
+let d: Record<string, any>[] = [];
+for (let i = 0; i < 1000; i++) {
+  d.push({ id: i, value: i });
+}
+const data = ref(d);
 const qrcode = ref();
 const qrcodeList = ref<any[]>([]);
 const list = [...Array(12)].map(_item => {
