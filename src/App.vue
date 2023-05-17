@@ -1,5 +1,11 @@
 <template>
   <div class="w-full">
+    <div>
+      {{ progress }}
+    </div>
+    <button @click="end">结束</button>
+    <button @click="stop">停止</button>
+    <button @click="start">开始</button>
     <div class="flex">
       <ImpExcel @success="loadDataSuccess" dateFormat="YYYY-MM-DD">
         <button class="m-3"> 导入Excel </button>
@@ -22,6 +28,7 @@ import ImpExcel from '@/components/EXCEL.vue'
 import VirtualList from '@/components/VirtualList.vue'
 import { parallelTask } from '@/utils/common';
 import { ref } from "vue";
+import useFakeProgress from './hooks/useFakeProgress';
 interface ExcelData<T = any> {
   header: string[];
   results: T[];
@@ -31,6 +38,7 @@ let d: Record<string, any>[] = [];
 for (let i = 0; i < 1000; i++) {
   d.push({ id: i, value: i });
 }
+const { end, progress, start, stop } = useFakeProgress({ autoStart: true, timeConstant: 10000 })
 const data = ref(d);
 const qrcode = ref();
 const qrcodeList = ref<any[]>([]);
