@@ -20,6 +20,17 @@
     <QRcode v-for="(item, index) in qrcodeList" ref="qrcode" :key="index" :qr-url="item.label" :qr-text1="item.text1"
       :qr-text2="item.text2" :qr-text3="item.text3" />
   </div>
+  <div class="demo">
+    <at-input :queryOptions="queryOptions" placeholder="请输入" :wrap="wrapAble" ref="inputRef" height="200px"
+      :disabled="isDisabled"></at-input>
+    <div style="margin-top: 16px;">
+      <button @click="wrapAble = !wrapAble">{{ wrapAble ? '禁止换行' : '开启换行' }}</button>
+      <button @click="isDisabled = !isDisabled">{{ isDisabled ? '启用' : '禁用' }}</button>
+      <button @click="setFocus">聚焦</button>
+      <button @click="getText">获取文本</button>
+      <button @click="getAtList">获取@数组</button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -29,6 +40,7 @@ import VirtualList from '@/components/VirtualList.vue'
 import { parallelTask } from '@/utils/common';
 import { ref } from "vue";
 import useFakeProgress from './hooks/useFakeProgress';
+import { AtInput } from '@/components/at-input';
 interface ExcelData<T = any> {
   header: string[];
   results: T[];
@@ -76,5 +88,35 @@ const loadDataSuccess = (res: ExcelData[]) => {
     }
   })
   qrcodeList.value = result
+}
+
+function queryOptions(key: string) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
+        { key: 1, label: '星期一' },
+        { key: 2, label: '星期二' },
+        { key: 3, label: '星期三' },
+        { key: 4, label: '星期四' },
+        { key: 5, label: '12313123123' },
+        { key: 6, label: 'asdasdqwe' },
+      ].filter((item) => item.label.includes(key)))
+    }, 500)
+  })
+}
+const inputRef = ref();
+
+let wrapAble = ref(true)
+let isDisabled = ref(false)
+
+function setFocus() {
+  inputRef.value.setFocus()
+}
+
+function getText() {
+  console.log(inputRef.value.getText())
+}
+function getAtList() {
+  console.log(inputRef.value.getAtList())
 }
 </script>
